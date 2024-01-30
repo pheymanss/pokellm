@@ -4,6 +4,35 @@ from bs4 import BeautifulSoup
 import json
 
 class Smogon:
+    """
+    A class used to interface with the Smogon Pokemon competitive battling platform
+    for a specific generation.
+
+    ...
+
+    Attributes
+    ----------
+    gen : int
+        an integer representing the Pokemon generation
+    gen_codename : str
+        a string representing the codename of the Pokemon generation (eg rb, gs, sv)
+    base_url : str
+        a string representing the base URL for the Smogon dex
+    mechanics : dict
+        a dictionary containing the game mechanics for the specified generation
+    pokedex : list
+        a list of dictionaries containing the Pokemon in the specified generation
+
+    Methods
+    -------
+    get_game_mechanics():
+        Returns a dictionary containing the game mechanics for the specified generation.
+        Includes the fields: pokemon, abilities, items, moves, formats, natures, types
+    get_pokemon_info(pokemon):
+        Returns a dictionary containing the information for the specified Pokemon
+    """
+
+
     def __init__(self, gen: int):	
 
         # assert valid gen
@@ -33,7 +62,6 @@ class Smogon:
 
         # fetch game mechanics and save into separate json files
         self.mechanics = self.get_game_mechanics()
-
         self.pokedex = self.mechanics['pokemon']
 
         # check if subdirectory 'mechanics' exists inside the gen_# directory
@@ -47,7 +75,15 @@ class Smogon:
 
 
     def get_game_mechanics(self):
+        """
+        Fetches the game mechanics from Smogon for the specified generation
+        Includes the fields: pokemon, abilities, items, moves, formats, natures, types
 
+        Returns
+        -------
+        mechanics : dict
+            a dictionary containing the game mechanics for the specified generation
+        """
         
         url = f'{self.base_url}pokemon/'
         response = requests.get(url)
@@ -63,8 +99,23 @@ class Smogon:
 
         return mechanics
 
-    def get_pokemon_info(self, pokemon):
 
+    def get_pokemon_info(self, pokemon):
+        """
+        Fetches the information for the specified Pokemon from the Smogon dex
+        from the specified pokemon strategy page. Includes learnset, stats, evolutions,
+        metagame overview, all the existing sets and their corresponding strategies.
+
+        Parameters
+        ----------
+        pokemon : str
+            a string representing the name of the Pokemon
+
+        Returns
+        -------
+        pokemon_info : dict
+            a dictionary containing the information for the specified Pokemon
+        """
         # validate pokemon
         if pokemon not in [poke['name'] for poke in self.mechanics['pokemon']]:
             raise ValueError(f'{pokemon} not found on generation {self.gen} pokedex')
