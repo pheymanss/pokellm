@@ -1,2 +1,4 @@
 /pokellm/
+/chromadb
+/gen_*
 *.pyc
